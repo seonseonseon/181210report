@@ -16,19 +16,12 @@ void reverse_string(char* str, int start, int end);
 
 int main()
 {
-	clock_t start_time = clock(), end_time = clock(), elapsed_time;
-	end_time = clock();
-	elapsed_time = end_time - start_time;
+	clock_t start_time = 0, end_time = 0;
 
 	srand(time(NULL));
 
 	int rotate = rand()%(10001) - 5000;
 	int length = rand()%10000 + 1;
-
-	rotate = 3;
-	length = 10;
-
-	printf("rotate=%d\nlength=%d\n", rotate, length);
 
 	char* string = (char*)malloc(length);
 
@@ -39,13 +32,29 @@ int main()
 	*(string + length) = NULL;
 
 	printf("before : %s\n", string);
-	trivial(string, rotate, length);
-	juggling(string, rotate, length);
-	block_swap(string, rotate, length);
-	reverse(string, rotate, length);
-	
-	
 
+	start_time = clock();
+	trivial(string, rotate, length);
+	end_time = clock();
+	clock_t elapsed_time1 = end_time - start_time;
+	
+	start_time = clock();
+	juggling(string, rotate, length);
+	end_time = clock();
+	clock_t elapsed_time2 = end_time - start_time;
+
+	start_time = clock();
+	block_swap(string, rotate, length);
+	end_time = clock();
+	clock_t elapsed_time3 = end_time - start_time;
+
+	start_time = clock();
+	reverse(string, rotate, length);
+	end_time = clock();
+	clock_t elapsed_time4 = end_time - start_time;
+
+	printf("\t\t\t\t%15s%15s%15s%15s\n", "trivial", "juggling", "blockswap", "reverse");
+	printf("%8s%8d%8s%8d%15f%15f%15f%15f", "rotate", rotate, "length", length, (double)elapsed_time1, (double)elapsed_time2, (double)elapsed_time3, (double)elapsed_time4);
 }
 
 void trivial(char* string, int rotate, int length)
@@ -54,7 +63,6 @@ void trivial(char* string, int rotate, int length)
 	
 	if (rotate == 0 || abs(rotate) == length || abs(rotate) % length == 0)
 	{
-		printf("trivial : %s\n", string);
 		return;
 	}
 		
@@ -72,16 +80,12 @@ void trivial(char* string, int rotate, int length)
 			*(string + length - 1) = tmp;
 			*(string + length) = NULL;
 		}
-
-		printf("trivial : %s\n", string);
 		return;
 	}
 
 	else if (rotate > 0)
 	{
 		rotate = rotate % length;
-
-
 		for (int j = 0; j < rotate; j++)
 		{
 			tmp = *(string + length - 1);
@@ -91,7 +95,6 @@ void trivial(char* string, int rotate, int length)
 			}
 			*(string + 0) = tmp;
 		}
-		printf("trivial : %s\n", string);
 		return;
 	}
 }
@@ -108,7 +111,6 @@ void juggling(char* string, int rotate, int length)
 {
 	if (rotate == 0 || abs(rotate) == length || abs(rotate) % length == 0)
 	{
-		printf("juggling : %s\n", string);
 		return;
 	}
 	else if (find_gcd(abs(rotate), length) < 0)
@@ -120,17 +122,13 @@ void juggling(char* string, int rotate, int length)
 	else if (find_gcd(abs(rotate), length) == 1)
 	{
 		char tmp;
-
 		if (rotate == 0 || abs(rotate) == length || abs(rotate) % length == 0)
 		{
-			printf("juggling : %s\n", string);
 			return;
 		}
-
 		else if (rotate < 0)
 		{
 			rotate = abs(rotate) % length;
-
 			for (int j = 0; j < rotate; j++)
 			{
 				tmp = *(string + 0);
@@ -141,16 +139,12 @@ void juggling(char* string, int rotate, int length)
 				*(string + length - 1) = tmp;
 				*(string + length) = NULL;
 			}
-
-			printf("juggling : %s\n", string);
 			return;
 		}
 
 		else if (rotate > 0)
 		{
 			rotate = rotate % length;
-
-
 			for (int j = 0; j < rotate; j++)
 			{
 				tmp = *(string + length - 1);
@@ -160,10 +154,9 @@ void juggling(char* string, int rotate, int length)
 				}
 				*(string + 0) = tmp;
 			}
-			printf("juggling : %s\n", string);
 			return;
 		}
-		return;
+		
 	}
 
 	else if (rotate > 0)
@@ -178,7 +171,6 @@ void juggling(char* string, int rotate, int length)
 		}
 		*(tmp + gcd) = NULL;
 
-
 		for (int j = 0; j < rotate; j++)
 		{
 			strncpy_s(tmp, sizeof(tmp), string + length - gcd, gcd);
@@ -188,8 +180,6 @@ void juggling(char* string, int rotate, int length)
 			}
 			strncpy_s(string, sizeof(char), tmp, gcd);
 		}
-
-		printf("juggling : %s\n", string);
 		return;
 	}
 
@@ -213,7 +203,6 @@ void juggling(char* string, int rotate, int length)
 			}
 			strncpy_s(string + length - gcd,sizeof(char), tmp, gcd);
 		}
-		printf("juggling : %s\n", string);
 		return;
 	}
 }
@@ -221,19 +210,14 @@ void juggling(char* string, int rotate, int length)
 
 void block_swap(char* string, int rotate, int length)
 {
-	
-
 	if (rotate == 0 || abs(rotate) == length || abs(rotate) % length == 0)
 	{
-		printf("blockswap : %s\n", string);
 		return;
 	}
 	
-
 	else if (length == abs(rotate) * 2)
 	{
 		swap(string, 0, length - rotate, rotate);
-		printf("blockswap : %s\n", string);
 		return;
 	}
 
@@ -257,7 +241,6 @@ void block_swap(char* string, int rotate, int length)
 			
 		}
 		swap(string, rotate - i, rotate, i);
-		printf("blockswap : %s\n", string);
 		return;
 	}
 
@@ -282,9 +265,9 @@ void block_swap(char* string, int rotate, int length)
 
 		}
 		swap(string, rotate - i, rotate, i);
-		printf("blockswap : %s\n", string);
 		return;
 	}
+	return;
 }
 
 void swap(char* string, int fi, int si, int rotate)
@@ -304,7 +287,6 @@ void reverse(char* string, int rotate, int length)
 {
 	if (rotate == 0 || abs(rotate) == length || abs(rotate) % length == 0)
 	{	
-		printf("reverse : %s\n", string);
 		return;
 	}
 	else if (rotate < 0)
@@ -313,7 +295,6 @@ void reverse(char* string, int rotate, int length)
 		reverse_string(string, abs(rotate), length - 1);
 		reverse_string(string, 0, length - 1);
 
-		printf("reverse : %s\n", string);
 		return;
 	}
 	else if (rotate > 0)
@@ -322,7 +303,6 @@ void reverse(char* string, int rotate, int length)
 		reverse_string(string, rotate, length - 1);
 		reverse_string(string, 0, rotate - 1);
 
-		printf("reverse : %s\n", string);
 		return;
 	}
 }
